@@ -1,0 +1,105 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --primary-color: #222f56;
+    --secondary-color: #052995;
+}
+
+body {
+    background-color: var(--primary-color) !important;
+}
+
+.movies {
+    background-color: var(--secondary-color) !important;
+    position: relative;
+    height: 850px;
+}
+
+img {
+    width: 100%;
+}
+
+#main {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+
+.movie_content_box {
+    padding: 10px;
+}
+
+.movie_content_box h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.movie_content_box p {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: white;
+}
+
+span p {
+    width: 50px;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 8px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.yellow {
+    background-color: yellow !important;
+}
+
+.green {
+    background-color: green;
+}
+
+.red {
+    background-color: red;
+}
+
+#seats {
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
+#seats-inner {
+    width: 70%;
+    margin: 0 auto;
+}
+.seat {
+    text-align: center;
+    padding: 20px;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+.seat p {
+    margin-bottom: 0;
+}
+.seat-prices {
+    gap: 50px;
+    padding: 40px;
+    justify-content: space-between;
+}
+.seat-prices div {
+    width: 30px;
+    height: 30px;
+}
+.white {
+    background-color: white;
+}
+#checkout {
+    padding: 15px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 10px;
+}
