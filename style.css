@@ -80,6 +80,7 @@ span p {
     padding: 20px;
     border: 1px solid black;
     border-radius: 10px;
+    background-color: white;
 }
 .seat p {
     margin-bottom: 0;
@@ -98,8 +99,17 @@ span p {
 }
 #checkout {
     padding: 15px;
-    background: red;
+    background: green;
     color: white;
     border: none;
     border-radius: 10px;
+}
+.selected {
+    background-color: red;
+}
+.flex {
+    display: flex;
+}
+.seat p {
+    cursor: pointer;
 }

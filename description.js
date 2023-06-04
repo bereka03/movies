@@ -280,7 +280,9 @@ const seats = [
 // [ 1 ]  [ 2 ]  [ 3 ]
 // [ 4 ]  [ 5 ]  [ 6 ]
 // [ 7 ]  [ 8 ]  [ 9 ]
-
+let price = 0;
+const price_p = document.getElementById('price-p');
+price_p.textContent = `${seats[0].price}₾`
 function showSeats(obj){
   const seatDiv = document.getElementById('seats-inner');
   
@@ -290,34 +292,24 @@ function showSeats(obj){
     seatEl.innerHTML =
       `
         <div class="p-3">
-          <div id='${seat.id}' class="seat white">
+          <div id='${seat.id}' class="seat">
           <p>${seat.id}</p></div>
         </div>
       `
       seatDiv.appendChild(seatEl);
-      switch(seat.id){
-        case 9: document.getElementById(seat.id).classList.add('yellow');  
-        break;
-        case 10: document.getElementById(seat.id).classList.add('yellow');
-        break;
-        case 15: document.getElementById(seat.id).classList.add('yellow');
-        break;
-        case 16: document.getElementById(seat.id).classList.add('yellow');
-        break;
-        case 21: document.getElementById(seat.id).classList.add('yellow');
-        break;
-        case 22: document.getElementById(seat.id).classList.add('yellow');
-        break;
-      }
+
   })
-  
+  const priceEl = document.getElementById('price');
   const seatCard = document.querySelectorAll('.seat');
   seatCard.forEach(seat => seat.addEventListener('click', () => {
-    seat.classList.remove('white');
-    seat.classList.remove('yellow');
-    seat.classList.add('red');
+    // seat.style.pointer='cursor';
+    seat.classList.toggle('selected');
+    
+    if (seat.classList.contains('selected')){price += seats[seat.id - 1].price}
+    else {price -= seats[seat.id - 1].price}
+    priceEl.innerHTML = parseInt(price)
+
   }))
-  
 }
 
 
