@@ -306,7 +306,7 @@ function showSeats(obj){
   seatCard.forEach(seat => seat.addEventListener('click', () => {
     seat.classList.toggle('selected');
 
-    if (seat.classList.contains('selected') && !(seat.id in choosenSeats)){
+    if (seat.classList.contains('selected') && !(seat.id == choosenSeats.forEach(id => id))){
       price += seats[seat.id - 1].price
       choosenSeats.push(seat.id)
       console.log(choosenSeats)
