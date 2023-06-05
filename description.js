@@ -112,7 +112,7 @@ async function getMovies(url) {
   // ]
   showMovies(data.results);
 }
-function showMovies(movies) {
+export default function showMovies(movies) {
   similar.innerHTML = " ";
 
   // აქ ახალი ცვლდაით ჩვენ გამოვიყენეთ math.rand რომელიც მოცემული მასივიდან 0-20 მდე ინდექსებს
@@ -283,6 +283,8 @@ const seats = [
 let price = 0;
 const price_p = document.getElementById('price-p');
 price_p.textContent = `${seats[0].price}₾`
+const choosenSeats = [];
+const checkoutBtn = document.getElementById('checkout');
 function showSeats(obj){
   const seatDiv = document.getElementById('seats-inner');
   
@@ -302,16 +304,36 @@ function showSeats(obj){
   const priceEl = document.getElementById('price');
   const seatCard = document.querySelectorAll('.seat');
   seatCard.forEach(seat => seat.addEventListener('click', () => {
-    // seat.style.pointer='cursor';
     seat.classList.toggle('selected');
-    
-    if (seat.classList.contains('selected')){price += seats[seat.id - 1].price}
-    else {price -= seats[seat.id - 1].price}
-    priceEl.innerHTML = parseInt(price)
 
+    if (seat.classList.contains('selected') && !(seat.id in choosenSeats)){
+      price += seats[seat.id - 1].price
+      choosenSeats.push(seat.id)
+      console.log(choosenSeats)
+    }
+    else {
+      price -= seats[seat.id - 1].price
+      for (let each of choosenSeats){
+        if (each === seat.id){
+          choosenSeats.splice(choosenSeats.indexOf(each), 1);
+          console.log(choosenSeats)
+        }
+      }
+    }
+    priceEl.innerHTML = `${parseInt(price)}₾`;
+    localStorage.setItem('price', price);
+    if (choosenSeats.length === 0){
+      checkoutBtn.setAttribute('disabled', true);
+    }else {
+     checkoutBtn.removeAttribute('disabled'); 
+    }
   }))
 }
-
+ 
+checkoutBtn.addEventListener('click', () => {
+  localStorage.setItem('seats', choosenSeats.map(seat => seat));
+  window.location = 'checkout.html';
+})
 
 // eachSeat.forEach(seat => seat.addEventListener('click', console.log('click')))
 

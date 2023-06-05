@@ -113,3 +113,6 @@ span p {
 .seat p {
     cursor: pointer;
 }
+#checkout:disabled{
+    background-color: gray;
+}
