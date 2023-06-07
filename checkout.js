@@ -1,7 +1,8 @@
 const IMG_PATH = "https://image.tmdb.org/t/p/w1280/";
 const movie = localStorage.getItem('movie');
 const movieData = JSON.parse(movie);
-const seats = localStorage.getItem('seats');
+const seats = JSON.parse(localStorage.getItem('seats'));
+console.log(seats);
 const price = localStorage.getItem('price');
 
 const movieDesc = document.createElement("div");
@@ -27,10 +28,11 @@ movieDesc.innerHTML = `
 container.appendChild(movieDesc);
 const seat_p = document.getElementById('choosenSeats');
 function showSeats(){
-    for (each of seats){
-        const eachSeat = document.createElement('span');
-        eachSeat.textContent = each;
-        seat_p.appendChild(eachSeat);
-    }  
+    const eachSeat = document.createElement('span');
+    eachSeat.textContent = seats.join(',');
+    seat_p.appendChild(eachSeat); 
 }
 showSeats();
+
+localStorage.setItem('seats', JSON.stringify(seats));
+localStorage.setItem('price', price);

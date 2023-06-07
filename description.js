@@ -66,6 +66,7 @@ movieDesc.innerHTML = `
     <p class="text-white">${movieData.overview}</p>
     <p class="text-white">${movieData.original_language}</p>
     <p class="text-white">${movieData.vote_average}</p>
+    <div id='seats'></div>
     </div>
     </div>
 `;
@@ -174,8 +175,7 @@ function getClassByVote(vote) {
   }
 }
 
-// აქ უნდა შექმნათ ახალი ობიექტი თქვნეი ხლეით დაახლოებით უნდა იყოს
-
+// აქ ვქმნით ადგილების ობიექტს
 const seats = [
   {
     id: 1,
@@ -275,16 +275,12 @@ const seats = [
   },
 ];
 
-// seat ზე დაფუძნებიტ უნდა გამოიტანო ვიზაულირად
-
-// [ 1 ]  [ 2 ]  [ 3 ]
-// [ 4 ]  [ 5 ]  [ 6 ]
-// [ 7 ]  [ 8 ]  [ 9 ]
 let price = 0;
 const price_p = document.getElementById('price-p');
 price_p.textContent = `${seats[0].price}₾`
 const choosenSeats = [];
 const checkoutBtn = document.getElementById('checkout');
+// ადგილების დახატვა და eventlistener-ების დადება თითოეული ადგილზე
 function showSeats(obj){
   const seatDiv = document.getElementById('seats-inner');
   
@@ -303,25 +299,54 @@ function showSeats(obj){
   })
   const priceEl = document.getElementById('price');
   const seatCard = document.querySelectorAll('.seat');
+/* ვთქვათ თუ checkout.html-დან უკან დავბრუნდით, რომ არ დაგვეკარგოს არჩეული ადგილები და შესაბამისად ფასი
+localstorage-ის გამოყენებით ვანახლებთ მნიშვნელობას (choosenSeats-ის მნიშვნელობას ვანიჭებთ storageSeats) */
+  const storageSeats = JSON.parse(localStorage.getItem('seats')); 
+  // თუ storageSeats არსებობს მაშინ შესაბამისად seat ელემენტებს დავუსეტოთ selected კლასი და დავამატოთ choosenSeats მასივში
+  if (storageSeats !== null){
+    console.log(storageSeats);
+    for (let each of seatCard){
+      for (let id of storageSeats){
+        if (each.id == id){
+          each.classList.toggle('selected');
+          choosenSeats.push(each.id);
+        }
+      }
+    }
+  }
+  // ანალოგიურად ფასის შემთხვევაში 
+  let priceStorage = localStorage.getItem('price');
+  if (priceStorage != null ){
+    priceEl.innerHTML = `${priceStorage}₾`;
+    price += parseInt(priceStorage);
+  }
+// თითოეული ადგილის არჩევისას გაშვებული მოქმედებები
   seatCard.forEach(seat => seat.addEventListener('click', () => {
     seat.classList.toggle('selected');
-
+    // თუ ადგილი არის არჩეული გაიზარდოს ფასი და ლოკალსტორიჯში დავასეივოთ განახლებული ფასი და არჩეული ადგილები
+    // (choosenSeats არის მასივი სადაც ვინახავთ არჩეული ადგილების ნომრებს)
     if (seat.classList.contains('selected') && !(seat.id == choosenSeats.forEach(id => id))){
       price += seats[seat.id - 1].price
       choosenSeats.push(seat.id)
       console.log(choosenSeats)
+      localStorage.setItem('seats', JSON.stringify(choosenSeats));
+      localStorage.setItem('price', price);
     }
     else {
       price -= seats[seat.id - 1].price
+      localStorage.setItem('price', price);
+      // value-ის მიხედვით მასივიდან ამოშლა ელემენტის, რომელიც არ ისახება choosenSeats მასივში და კლასში არ აქვს selected
       for (let each of choosenSeats){
         if (each === seat.id){
           choosenSeats.splice(choosenSeats.indexOf(each), 1);
           console.log(choosenSeats)
+          localStorage.setItem('seats', JSON.stringify(choosenSeats));
         }
       }
     }
     priceEl.innerHTML = `${parseInt(price)}₾`;
     localStorage.setItem('price', price);
+    // თუ ადგილი არის არჩეული checkout ღილაკის ჩართვა
     if (choosenSeats.length === 0){
       checkoutBtn.setAttribute('disabled', true);
     }else {
@@ -329,28 +354,14 @@ function showSeats(obj){
     }
   }))
 }
- 
+/* გვერდის ჩატვირთვისას თუ localstorage-ში ფასი უდრის 0-ს და ადგილების ნომრებიც არაა ჩასეტილი
+მაშინ გამოვრთოთ checkout ღილაკი */
+if (localStorage.getItem('price') == 0 && JSON.parse(localStorage.getItem('seats')).length === 0){
+  checkoutBtn.setAttribute('disabled', true);
+}
+// checkout ღილაკზე დაჭერისას გაშვებული ივენთი
 checkoutBtn.addEventListener('click', () => {
-  localStorage.setItem('seats', choosenSeats.map(seat => seat));
+  localStorage.setItem('seats', JSON.stringify(choosenSeats));
+  localStorage.setItem('price', price);
   window.location = 'checkout.html';
 })
-
-// eachSeat.forEach(seat => seat.addEventListener('click', console.log('click')))
-
-
-
-
-// დაჭერაზე უბრალოდ გადაიყვანეთ checkout გვერდზე რომელსაც ააწყობთ ადგილი ან იდ ს და ფასის შესაბამისად
-
-/// დაჭრაზე ისევ localstraogeshი ჩააგდეთ ეგ ინფორმაცია და ააწყვეთ ახალი გვერდი checkout.html და იქ გამოიტანეთ ადგილი და ფილმის დასახელაბ
-
-// 1) seats.forEach  და დახატე ყველა ადგილი
-
-// 2)   movieEl.addEventListener("click", () => {
-// აქედან ჩაემატა
-//   localStorage.setItem("seats", JSON.stringify(seats));
-//   // ახალ გვერდზე გადაგიყვანოს
-//   window.location = "checkout.html";
-// });
-
-//3) /// რაც ამ გვერდში გვაქვს ეგ უნდა გამოიყენო უბრალოდ async function getMovies(url)  ესენი აღარ გამოიზძახოთ checkout ს გვერდზე
