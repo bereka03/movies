@@ -277,94 +277,115 @@ const seats = [
 
 let price = 0;
 const price_p = document.getElementById('price-p');
-price_p.textContent = `${seats[0].price}₾`
+price_p.textContent = `${seats[0].price}₾`;
 const choosenSeats = [];
 const checkoutBtn = document.getElementById('checkout');
-// ადგილების დახატვა და eventlistener-ების დადება თითოეული ადგილზე
-function showSeats(obj){
+
+// Function to show seats
+function showSeats(obj) {
   const seatDiv = document.getElementById('seats-inner');
-  
-  obj.forEach(seat => {
+
+  obj.forEach((seat) => {
     const seatEl = document.createElement('div');
     seatEl.classList.add('col-2');
-    seatEl.innerHTML =
-      `
-        <div class="p-3">
-          <div id='${seat.id}' class="seat">
-          <p>${seat.id}</p></div>
+    seatEl.innerHTML = `
+      <div class="p-3">
+        <div id='${seat.id}' class="seat">
+          <p>${seat.id}</p>
         </div>
-      `
-      seatDiv.appendChild(seatEl);
+      </div>
+    `;
+    seatDiv.appendChild(seatEl);
+  });
 
-  })
   const priceEl = document.getElementById('price');
   const seatCard = document.querySelectorAll('.seat');
-/* ვთქვათ თუ checkout.html-დან უკან დავბრუნდით, რომ არ დაგვეკარგოს არჩეული ადგილები და შესაბამისად ფასი
-localstorage-ის გამოყენებით ვანახლებთ მნიშვნელობას (choosenSeats-ის მნიშვნელობას ვანიჭებთ storageSeats) */
-  const storageSeats = JSON.parse(localStorage.getItem('seats')); 
-  // თუ storageSeats არსებობს მაშინ შესაბამისად seat ელემენტებს დავუსეტოთ selected კლასი და დავამატოთ choosenSeats მასივში
-  if (storageSeats !== null){
-    console.log(storageSeats);
-    for (let each of seatCard){
-      for (let id of storageSeats){
-        if (each.id == id){
-          each.classList.toggle('selected');
-          choosenSeats.push(each.id);
+
+  try {
+    const storageSeats = JSON.parse(localStorage.getItem('seats'));
+    if (storageSeats !== null) {
+      for (let each of seatCard) {
+        for (let id of storageSeats) {
+          if (each.id == id) {
+            each.classList.toggle('selected');
+            choosenSeats.push(each.id);
+          }
         }
       }
     }
+  } catch (error) {
+    console.error('Error accessing or parsing localStorage "seats"');
   }
-  // ანალოგიურად ფასის შემთხვევაში 
-  let priceStorage = localStorage.getItem('price');
-  if (priceStorage != null ){
-    priceEl.innerHTML = `${priceStorage}₾`;
-    price += parseInt(priceStorage);
-    console.log(price);
-  }
-// თითოეული ადგილის არჩევისას გაშვებული მოქმედებები
-  seatCard.forEach(seat => seat.addEventListener('click', () => {
-    seat.classList.toggle('selected');
-    // თუ ადგილი არის არჩეული გაიზარდოს ფასი და ლოკალსტორიჯში დავასეივოთ განახლებული ფასი და არჩეული ადგილები
-    // (choosenSeats არის მასივი სადაც ვინახავთ არჩეული ადგილების ნომრებს)
-    if (seat.classList.contains('selected') && !(seat.id == choosenSeats.forEach(id => id))){
-      price += seats[seat.id - 1].price
-      choosenSeats.push(seat.id)
-      console.log(choosenSeats)
-      localStorage.setItem('seats', JSON.stringify(choosenSeats));
-      localStorage.setItem('price', price);
+
+  try {
+    let priceStorage = localStorage.getItem('price');
+    if (priceStorage != null) {
+      priceEl.innerHTML = `${priceStorage}₾`;
+      price += parseInt(priceStorage);
+      console.log(price);
     }
-    else {
-      price -= seats[seat.id - 1].price
-      localStorage.setItem('price', price);
-      // value-ის მიხედვით მასივიდან ამოშლა ელემენტის, რომელიც არ ისახება choosenSeats მასივში და კლასში არ აქვს selected
-      for (let each of choosenSeats){
-        if (each === seat.id){
-          choosenSeats.splice(choosenSeats.indexOf(each), 1);
-          console.log(choosenSeats)
+  } catch (error) {
+    console.error('Error accessing localStorage "price"');
+  }
+
+  seatCard.forEach((seat) =>
+    seat.addEventListener('click', () => {
+      seat.classList.toggle('selected');
+      
+      try {
+        if (seat.classList.contains('selected') && !(seat.id == choosenSeats.forEach((id) => id))) {
+          price += seats[seat.id - 1].price;
+          choosenSeats.push(seat.id);
+          console.log(choosenSeats);
           localStorage.setItem('seats', JSON.stringify(choosenSeats));
+          localStorage.setItem('price', price);
+        } else {
+          price -= seats[seat.id - 1].price;
+          localStorage.setItem('price', price);
+
+          for (let each of choosenSeats) {
+            if (each === seat.id) {
+              choosenSeats.splice(choosenSeats.indexOf(each), 1);
+              console.log(choosenSeats);
+              localStorage.setItem('seats', JSON.stringify(choosenSeats));
+            }
+          }
         }
+        priceEl.innerHTML = `${parseInt(price)}₾`;
+        localStorage.setItem('price', price);
+
+        if (choosenSeats.length === 0) {
+          checkoutBtn.setAttribute('disabled', true);
+        } else {
+          checkoutBtn.removeAttribute('disabled');
+        }
+      } catch (error) {
+        console.error('Error accessing or parsing localStorage data');
       }
-    }
-    priceEl.innerHTML = `${parseInt(price)}₾`;
-    localStorage.setItem('price', price);
-    // თუ ადგილი არის არჩეული checkout ღილაკის ჩართვა
-    if (choosenSeats.length === 0){
-      checkoutBtn.setAttribute('disabled', true);
-    }else {
-     checkoutBtn.removeAttribute('disabled'); 
-    }
-  }))
+    })
+  );
 }
 
-/* გვერდის ჩატვირთვისას თუ localstorage-ში ფასი უდრის 0-ს ან null-ს */
-console.log(localStorage.getItem('price'), JSON.parse(localStorage.getItem('seats')))
-if (localStorage.getItem('price') == 0 || localStorage.getItem('price') == null){
-  checkoutBtn.setAttribute('disabled', true);
+try {
+  const priceFromStorage = localStorage.getItem('price');
+  const seatsFromStorage = JSON.parse(localStorage.getItem('seats'));
+
+  console.log(priceFromStorage, seatsFromStorage);
+
+  if (priceFromStorage === '0' || priceFromStorage === null || isNaN(parseInt(priceFromStorage))) {
+    checkoutBtn.setAttribute('disabled', true);
+  }
+} catch (error) {
+  console.error('Error accessing or parsing localStorage data');
 }
-// checkout ღილაკზე დაჭერისას გაშვებული ივენთი
+
 checkoutBtn.addEventListener('click', () => {
-  localStorage.setItem('seats', JSON.stringify(choosenSeats));
-  localStorage.setItem('price', price);
-  window.location = 'checkout.html';
-})
+  try {
+    localStorage.setItem('seats', JSON.stringify(choosenSeats));
+    localStorage.setItem('price', price);
+    window.location = 'checkout.html';
+  } catch (error) {
+    console.error('Error accessing or updating localStorage data');
+  }
+});
 // localStorage.clear();
