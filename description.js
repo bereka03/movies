@@ -356,13 +356,11 @@ localstorage-ის გამოყენებით ვანახლებ�
   }))
 }
 
-/* გვერდის ჩატვირთვისას თუ localstorage-ში ფასი უდრის 0-ს ან null-ს და ადგილების ნომრებიც არაა ჩასეტილი ან null-ია
-მაშინ გამოვრთოთ checkout ღილაკი */
-if ((localStorage.getItem('price') == 0 || localStorage.getItem('price') == null) &&
-   (JSON.parse(localStorage.getItem('seats')) == [] || JSON.parse(localStorage.getItem('seats')) == null)){
+/* გვერდის ჩატვირთვისას თუ localstorage-ში ფასი უდრის 0-ს ან null-ს */
+console.log(localStorage.getItem('price'), JSON.parse(localStorage.getItem('seats')))
+if (localStorage.getItem('price') == 0 || localStorage.getItem('price') == null){
   checkoutBtn.setAttribute('disabled', true);
 }
-console.log(localStorage.getItem('price'), JSON.parse(localStorage.getItem('seats')))
 // checkout ღილაკზე დაჭერისას გაშვებული ივენთი
 checkoutBtn.addEventListener('click', () => {
   localStorage.setItem('seats', JSON.stringify(choosenSeats));
